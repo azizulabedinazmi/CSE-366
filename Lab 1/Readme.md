@@ -13,6 +13,8 @@ This Python script randomly selects students for viva sessions from a list of st
 - [Contributing](#contributing)
 - [Requirements Checklist](#requirements-checklist)
 
+---
+
 ## 🎯 Objective
 The purpose of this script is to:
 1. Familiarize users with file I/O, list manipulation, and basic iteration in Python.
