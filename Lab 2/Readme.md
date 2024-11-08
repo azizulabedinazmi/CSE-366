@@ -120,11 +120,8 @@ The following graphs illustrate the results of the simulation:
 ## Conclusion
 
 The Trading Agent Simulation successfully demonstrates how the agent manages stock levels and pricing based on the given parameters and simulated data. The graphs provide a clear visualization of the agent's decisions and their impact on stock levels and prices over time.
-```
+
 ### Sample Images for Graph Screenshots
 
 - `sample_graph_stock_prices.png`
 - `sample_graph_orders.png`
-
-These images should be created and saved in the same directory as the markdown file to ensure they are correctly referenced in the report.
-```
