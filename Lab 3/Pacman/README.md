@@ -20,6 +20,7 @@ Here are the tables for each maze (tinyMaze, mediumMaze, bigMaze) with the actua
 | UCS       | 0.00083     | 8              |
 | A*        | 0.00061     | 8              |
 
+![tinyMaze](img/tinyMaze.png)
 ### mediumMaze
 
 | Algorithm | Time (s) | Length of Path |
@@ -28,7 +29,7 @@ Here are the tables for each maze (tinyMaze, mediumMaze, bigMaze) with the actua
 | DFS       | 0.00226     | 130            |
 | UCS       | 0.00900     | 68             |
 | A*        | 0.00702     | 68             |
-
+![alt text](mediumMaze.png)
 ### bigMaze
 
 | Algorithm | Time (s) | Length of Path |
@@ -37,6 +38,7 @@ Here are the tables for each maze (tinyMaze, mediumMaze, bigMaze) with the actua
 | DFS       | 0.00519     | 210            |
 | UCS       | 0.04082     | 210            |
 | A*        | 0.03424     | 210            |
+![alt text](bigMaze.png)
 
 You can fill in the actual time and length of the path for each algorithm after running the respective commands:
 
