@@ -18,6 +18,7 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
+import time
 from util import*
 class SearchProblem:
     """
@@ -87,6 +88,8 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
+    start_time = time.time()
+    
     startState = problem.getStartState()
     if problem.isGoalState(startState):
         return []
@@ -99,6 +102,8 @@ def depthFirstSearch(problem):
         state, actions = frontier.pop()
 
         if problem.isGoalState(state):
+            end_time = time.time()
+            print(f"DFS Time Performance: {end_time - start_time} seconds")
             return actions
 
         if state not in explored:
@@ -108,64 +113,73 @@ def depthFirstSearch(problem):
                     newActions = actions + [action]
                     frontier.push((successor, newActions))
 
+    end_time = time.time()
+    print(f"DFS Time Performance: {end_time - start_time} seconds")
     return []
    # util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    #util.raiseNotDefined()
-    """ Search the shallowest nodes in the search tree first. """
+    start_time = time.time()
+    
     currPath = []           # The path that is popped from the frontier in each loop
-    currState =  problem.getStartState()    # The state(position) that is popped for the frontier in each loop
+    currState = problem.getStartState()    # The state(position) that is popped for the frontier in each loop
     print(f"currState: {currState}")
     if problem.isGoalState(currState):     # Checking if the start state is also a goal state
         return currPath
 
-    frontier = Queue()
-    frontier.push( (currState, currPath) )     # Insert just the start state, in order to pop it first
+    frontier = util.Queue()
+    frontier.push((currState, currPath))     # Insert just the start state, in order to pop it first
     explored = set()
     while not frontier.isEmpty():
         currState, currPath = frontier.pop()    # Popping a state and the corresponding path
         # To pass autograder.py question2:
         if problem.isGoalState(currState):
+            end_time = time.time()
+            print(f"BFS Time Performance: {end_time - start_time} seconds")
             return currPath
         explored.add(currState)
-        frontierStates = [ t[0] for t in frontier.list ]
+        frontierStates = [t[0] for t in frontier.list]
         for s in problem.getSuccessors(currState):
             if s[0] not in explored and s[0] not in frontierStates:
-                # Lecture code:
-                # if problem.isGoalState(s[0]):
-                #     return currPath + [s[1]]
-                frontier.push( (s[0], currPath + [s[1]]) )      # Adding the successor and its path to the frontier
+                frontier.push((s[0], currPath + [s[1]]))      # Adding the successor and its path to the frontier
 
+    end_time = time.time()
+    print(f"BFS Time Performance: {end_time - start_time} seconds")
     return []       # If this point is reached, a solution could not be found.
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    from util import Queue,PriorityQueue
+    from util import PriorityQueue
+    start_time = time.time()
+    
     fringe = PriorityQueue()                    # Fringe to manage which states to expand
-    fringe.push(problem.getStartState(),0)
+    fringe.push(problem.getStartState(), 0)
     visited = []                                # List to check whether state has already been visited
-    tempPath=[]                                 # Temp variable to get intermediate paths
-    path=[]                                     # List to store final sequence of directions 
-    pathToCurrent=PriorityQueue()               # Queue to store direction to children (currState and pathToCurrent go hand in hand)
+    tempPath = []                               # Temp variable to get intermediate paths
+    path = []                                   # List to store final sequence of directions 
+    pathToCurrent = PriorityQueue()             # Queue to store direction to children (currState and pathToCurrent go hand in hand)
     currState = fringe.pop()
+    
     while not problem.isGoalState(currState):
         if currState not in visited:
             visited.append(currState)
             successors = problem.getSuccessors(currState)
-            for child,direction,cost in successors:
+            for child, direction, cost in successors:
                 tempPath = path + [direction]
                 costToGo = problem.getCostOfActions(tempPath)
                 if child not in visited:
-                    fringe.push(child,costToGo)
-                    pathToCurrent.push(tempPath,costToGo)
+                    fringe.push(child, costToGo)
+                    pathToCurrent.push(tempPath, costToGo)
         currState = fringe.pop()
-        path = pathToCurrent.pop()    
+        path = pathToCurrent.pop()
+    
+    end_time = time.time()
+    print(f"UCS Time Performance: {end_time - start_time} seconds")
     return path
-    #util.raiseNotDefined()
+    # util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
     """
@@ -177,29 +191,35 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    from util import Queue,PriorityQueue
+    from util import PriorityQueue
+    start_time = time.time()
+    
     fringe = PriorityQueue()                    # Fringe to manage which states to expand
-    fringe.push(problem.getStartState(),0)
-    currState = fringe.pop()
+    fringe.push(problem.getStartState(), 0)
     visited = []                                # List to check whether state has already been visited
-    tempPath=[]                                 # Temp variable to get intermediate paths
-    path=[]                                     # List to store final sequence of directions 
-    pathToCurrent=PriorityQueue()               # Queue to store direction to children (currState and pathToCurrent go hand in hand)
+    tempPath = []                               # Temp variable to get intermediate paths
+    path = []                                   # List to store final sequence of directions 
+    pathToCurrent = PriorityQueue()             # Queue to store direction to children (currState and pathToCurrent go hand in hand)
+    currState = fringe.pop()
+    
     while not problem.isGoalState(currState):
         if currState not in visited:
             visited.append(currState)
             successors = problem.getSuccessors(currState)
-            for child,direction,cost in successors:
+            for child, direction, cost in successors:
                 tempPath = path + [direction]
-                costToGo = problem.getCostOfActions(tempPath) + heuristic(child,problem)
+                costToGo = problem.getCostOfActions(tempPath) + heuristic(child, problem)
                 if child not in visited:
-                    fringe.push(child,costToGo)
-                    pathToCurrent.push(tempPath,costToGo)
+                    fringe.push(child, costToGo)
+                    pathToCurrent.push(tempPath, costToGo)
         currState = fringe.pop()
-        path = pathToCurrent.pop()    
+        path = pathToCurrent.pop()
+    
+    end_time = time.time()
+    print(f"A* Time Performance: {end_time - start_time} seconds")
     return path
     
-    #util.raiseNotDefined()
+    # util.raiseNotDefined()
 
 
 # Abbreviations
