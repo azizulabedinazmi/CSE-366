@@ -1,191 +1,211 @@
-Berkeley AI Materials    
-
-Project 2: Multi-Agent Search
------------------------------
-
-Version 1.002. Last Updated: 10/22/2014.
-
-* * *
-
-### Table of Contents
-
-*   [Introduction](#Introduction)
-*   [Welcome](#Welcome)
-*   [Q1: Minimax](#Q2)
-*   [Q2: Alpha-Beta Pruning](#Q3)
-*   [Q3: Evaluation Function](#Q5)
-
-* * *
-
-> ![](http://ai.berkeley.edu/projects/release/multiagent/v1/002/pacman_multi_agent.png)
-> 
-> Pacman, now with ghosts.  
-> Minimax, Alpha-Beta Pruning,  
-> Evaluation.
-
-### Introduction
-
-In this project, you will design agents for the classic version of Pacman, including ghosts. Along the way, you will implement both minimax and expectimax search and try your hand at evaluation function design.
-
-The code base has not changed much from the previous project, but please start with a fresh installation, rather than intermingling files from project 1.
-
-As in project 1, this project includes an autograder for you to grade your answers on your machine. This can be run on all questions with the command:
-
-`python autograder.py`
-
-It can be run for one particular question, such as q2, by:
-
-`python autograder.py -q q2`
-
-It can be run for one particular test by commands of the form:
-
-`python autograder.py -t test_cases/q2/0-small-tree`
-
-By default, the autograder displays graphics with the `-t` option, but doesn't with the `-q` option. You can force graphics by using the `--graphics` flag, or force no graphics by using the `--no-graphics` flag.
-
-See the autograder tutorial in Project 0 for more information about using the autograder.
-
-The code for this project contains the following files, available as a [zip archive](http://ai.berkeley.edu/projects/release/multiagent/v1/002/multiagent.zip).
-
-**Files you'll edit:**
-
-[`multiAgents.py`](multiAgents.py)   Where all of your multi-agent search agents will reside.
-
-**Files you may want to read:**
-
-[`pacman.py`](pacman.py)   The main file that runs Pacman games. This file also describes a Pacman `GameState` type, which you will use extensively in this project
-
-[`game.py`](game.py)   The logic behind how the Pacman world works. This file describes several supporting types like AgentState, Agent, Direction, and Grid.
-
-[`util.py`](util.py)   Useful data structures for implementing search algorithms.
-
-**Files you can ignore:**
-
-[`graphicsDisplay.py`](graphicsDisplay.py)   Graphics for Pacman
-
-[`graphicsUtils.py`](graphicsUtils.py)   Support for Pacman graphics
-
-[`textDisplay.py`](textDisplay.py)   ASCII graphics for Pacman
-
-[`ghostAgents.py`](ghostAgents.py)   Agents to control ghosts
-
-[`keyboardAgents.py`](keyboardAgents.py)   Keyboard interfaces to control Pacman
-
-[`layout.py`](layout.py)   Code for reading layout files and storing their contents
-
-[`autograder.py`](autograder.py)   Project autograder
-
-[`testParser.py`](testParser.py)   Parses autograder test and solution files
-
-[`testClasses.py`](testClasses.py)   General autograding test classes
-
-[`test_cases/`](test_cases)   Directory containing the test cases for each question
-
-[`multiagentTestClasses.py`](multiagentTestClasses.html)   Project 2 specific autograding test classes
-
-**Files to Edit and Submit:** You will fill in portions of [`multiAgents.py`](multiAgents.py) during the assignment. You should submit this file with your code and comments. Please _do not_ change the other files in this distribution or submit any of our original files other than this file.
-
-**Evaluation:** Your code will be autograded for technical correctness. Please _do not_ change the names of any provided functions or classes within the code, or you will wreak havoc on the autograder. However, the correctness of your implementation -- not the autograder's judgements -- will be the final judge of your score. If necessary, we will review and grade assignments individually to ensure that you receive due credit for your work.
-
-**Academic Dishonesty:** We will be checking your code against other submissions in the class for logical redundancy. If you copy someone else's code and submit it with minor changes, we will know. These cheat detectors are quite hard to fool, so please don't try. We trust you all to submit your own work only; _please_ don't let us down. If you do, we will pursue the strongest consequences available to us.
-
-**Getting Help:** You are not alone! If you find yourself stuck on something, contact the course staff for help. Office hours, section, and the discussion forum are there for your support; please use them. If you can't make our office hours, let us know and we will schedule more. We want these projects to be rewarding and instructional, not frustrating and demoralizing. But, we don't know when or how to help unless you ask.
-
-**Discussion:** Please be careful not to post spoilers.
-
-* * *
-
-### <a name="Welcome"></a> Multi-Agent Pacman
-
-First, play a game of classic Pacman:
-
-### <a name="Q2"></a> Question 1 (5 points): Minimax
-
-Now you will write an adversarial search agent in the provided `MinimaxAgent` class stub in `multiAgents.py`. Your minimax agent should work with any number of ghosts, so you'll have to write an algorithm that is slightly more general than what you've previously seen in lecture. In particular, your minimax tree will have multiple min layers (one for each ghost) for every max layer.
-
-Your code should also expand the game tree to an arbitrary depth. Score the leaves of your minimax tree with the supplied `self.evaluationFunction`, which defaults to `scoreEvaluationFunction`. `MinimaxAgent` extends `MultiAgentSearchAgent`, which gives access to `self.depth` and `self.evaluationFunction`. Make sure your minimax code makes reference to these two variables where appropriate as these variables are populated in response to command line options.
-
-_Important:_ A single search ply is considered to be one Pacman move and all the ghosts' responses, so depth 2 search will involve Pacman and each ghost moving two times.
-
-_Grading_: We will be checking your code to determine whether it explores the correct number of game states. This is the only way reliable way to detect some very subtle bugs in implementations of minimax. As a result, the autograder will be _very_ picky about how many times you call `GameState.generateSuccessor`. If you call it any more or less than necessary, the autograder will complain. To test and debug your code, run
-
-`python autograder.py -q q2`
-
-This will show what your algorithm does on a number of small trees, as well as a pacman game. To run it without graphics, use:
-
-`python autograder.py -q q2 --no-graphics`
-
-_**Hints and Observations**_
-
-*   The correct implementation of minimax will lead to Pacman losing the game in some tests. This is not a problem: as it is correct behaviour, it will pass the tests.
-*   The evaluation function for the pacman test in this part is already written (`self.evaluationFunction`). You shouldn't change this function, but recognize that now we're evaluating \*states\* rather than actions, as we were for the reflex agent. Look-ahead agents evaluate future states whereas reflex agents evaluate actions from the current state.
-*   The minimax values of the initial state in the `minimaxClassic` layout are 9, 8, 7, -492 for depths 1, 2, 3 and 4 respectively. Note that your minimax agent will often win (665/1000 games for us) despite the dire prediction of depth 4 minimax.
-    
-    `python pacman.py -p MinimaxAgent -l minimaxClassic -a depth=4`
-    
-*   Pacman is always agent 0, and the agents move in order of increasing agent index.
-*   All states in minimax should be `GameStates`, either passed in to `getAction` or generated via `GameState.generateSuccessor`. In this project, you will not be abstracting to simplified states.
-*   On larger boards such as `openClassic` and `mediumClassic` (the default), you'll find Pacman to be good at not dying, but quite bad at winning. He'll often thrash around without making progress. He might even thrash around right next to a dot without eating it because he doesn't know where he'd go after eating that dot. Don't worry if you see this behavior, question 5 will clean up all of these issues.
-*   When Pacman believes that his death is unavoidable, he will try to end the game as soon as possible because of the constant penalty for living. Sometimes, this is the wrong thing to do with random ghosts, but minimax agents always assume the worst:
-    
-    `python pacman.py -p MinimaxAgent -l trappedClassic -a depth=3`
-    
-    Make sure you understand why Pacman rushes the closest ghost in this case.
-
-* * *
-
-### <a name="Q3"></a> Question 2 (5 points): Alpha-Beta Pruning
-
-Make a new agent that uses alpha-beta pruning to more efficiently explore the minimax tree, in `AlphaBetaAgent`. Again, your algorithm will be slightly more general than the pseudocode from lecture, so part of the challenge is to extend the alpha-beta pruning logic appropriately to multiple minimizer agents.
-
-You should see a speed-up (perhaps depth 3 alpha-beta will run as fast as depth 2 minimax). Ideally, depth 3 on `smallClassic` should run in just a few seconds per move or faster.
-
-`python pacman.py -p AlphaBetaAgent -a depth=3 -l smallClassic`
-
-The `AlphaBetaAgent` minimax values should be identical to the `MinimaxAgent` minimax values, although the actions it selects can vary because of different tie-breaking behavior. Again, the minimax values of the initial state in the `minimaxClassic` layout are 9, 8, 7 and -492 for depths 1, 2, 3 and 4 respectively.
-
-_Grading_: Because we check your code to determine whether it explores the correct number of states, it is important that you perform alpha-beta pruning without reordering children. In other words, successor states should always be processed in the order returned by `GameState.getLegalActions`. Again, do not call `GameState.generateSuccessor` more than necessary.
-
-**You must _not_ prune on equality in order to match the set of states explored by our autograder.** (Indeed, alternatively, but incompatible with our autograder, would be to also allow for pruning on equality and invoke alpha-beta once on each child of the root node, but this will _not_ match the autograder.)
-
-The pseudo-code below represents the algorithm you should implement for this question.
-
-![](http://ai.berkeley.edu/projects/release/multiagent/v1/002/alpha-beta-on-inequality.png)
-
-To test and debug your code, run
-
-`python autograder.py -q q3`
-
-This will show what your algorithm does on a number of small trees, as well as a pacman game. To run it without graphics, use:
-
-`python autograder.py -q q3 --no-graphics`
-
-The correct implementation of alpha-beta pruning will lead to Pacman losing some of the tests. This is not a problem: as it is correct behaviour, it will pass the tests.
-
-* * *
-
-
-### <a name="Q5"></a> Question 3 (6 points): Evaluation Function
-
-Write a better evaluation function for pacman in the provided function `betterEvaluationFunction`. The evaluation function should evaluate states, rather than actions like your reflex agent evaluation function did. You may use any tools at your disposal for evaluation, including your search code from the last project. With depth 2 search, your evaluation function should clear the `smallClassic` layout with one random ghost more than half the time and still run at a reasonable rate (to get full credit, Pacman should be averaging around 1000 points when he's winning).
-
-`python autograder.py -q q5`
-
-Grading: the autograder will run your agent on the `smallClassic` layout 10 times. We will assign points to your evaluation function in the following way:
-
-*   If you win at least once without timing out the autograder, you receive 1 points. Any agent not satisfying these criteria will receive 0 points.
-*   +1 for winning at least 5 times, +2 for winning all 10 times
-*   +1 for an average score of at least 500, +2 for an average score of at least 1000 (including scores on lost games)
-*   +1 if your games take on average less than 30 seconds on the autograder machine. The autograder is run on EC2, so this machine will have a fair amount of resources, but your personal computer could be far less performant (netbooks) or far more performant (gaming rigs).
-*   The additional points for average score and computation time will only be awarded if you win at least 5 times.
-
-#### Hints and Observations
-
-*   As for your reflex agent evaluation function, you may want to use the reciprocal of important values (such as distance to food) rather than the values themselves.
-*   One way you might want to write your evaluation function is to use a linear combination of features. That is, compute values for features about the state that you think are important, and then combine those features by multiplying them by different values and adding the results together. You might decide what to multiply each feature by based on how important you think it is.
-
-* * *
-
-### Submission
-
-You're not done yet! Follow your instructor's guidelines to receive credit on your project!
+# Report on `multiAgents.py`
+
+## Overview
+The `multiAgents.py` file is part of the Pacman AI projects developed at UC Berkeley. It contains implementations of various agents that play the Pacman game using different strategies. The file includes reflex agents, minimax agents, alpha-beta pruning agents, and expectimax agents.
+
+## ReflexAgent
+The `ReflexAgent` class inherits from the `Agent` class and chooses actions based on a state evaluation function.
+
+- **getAction**: This method selects the best action based on the evaluation function.
+- **evaluationFunction**: This method evaluates the game state by considering the distance to the closest food and the distance to the closest ghost.
+
+```python
+class ReflexAgent(Agent):
+    def getAction(self, gameState):
+        legalMoves = gameState.getLegalActions()
+        scores = [self.evaluationFunction(gameState, action) for action in legalMoves]
+        bestScore = max(scores)
+        bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
+        chosenIndex = random.choice(bestIndices)
+        return legalMoves[chosenIndex]
+
+    def evaluationFunction(self, currentGameState, action):
+        successorGameState = currentGameState.generatePacmanSuccessor(action)
+        newPos = successorGameState.getPacmanPosition()
+        newFood = successorGameState.getFood()
+        newGhostStates = successorGameState.getGhostStates()
+        newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+
+        foodDistances = [manhattanDistance(newPos, food) for food in newFood.asList()]
+        closestFoodDistance = min(foodDistances) if foodDistances else 0
+
+        ghostDistances = [manhattanDistance(newPos, ghostState.getPosition()) for ghostState in newGhostStates]
+        closestGhostDistance = min(ghostDistances) if ghostDistances else 0
+
+        score = successorGameState.getScore()
+        score -= closestFoodDistance
+        if closestGhostDistance > 0:
+            score += max(closestGhostDistance, 5)
+        return score
+
+## MultiAgentSearchAgent
+The `MultiAgentSearchAgent` class is an abstract class that provides common elements for multi-agent searchers like Minimax, AlphaBeta, and Expectimax agents.
+
+```python
+class MultiAgentSearchAgent(Agent):
+    def __init__(self, evalFn='scoreEvaluationFunction', depth='2'):
+        self.index = 0
+        self.evaluationFunction = util.lookup(evalFn, globals())
+        self.depth = int(depth)
+```
+
+## MinimaxAgent
+The `MinimaxAgent` class implements the minimax algorithm to choose the best action for Pacman.
+
+- **getAction**: Returns the minimax action from the current game state.
+- **minimax**: Recursively calculates the best score for an agent using the minimax algorithm.
+
+```python
+class MinimaxAgent(MultiAgentSearchAgent):
+    def getAction(self, gameState):
+        action, score = self.minimax(0, 0, gameState)
+        return action
+
+    def minimax(self, curr_depth, agent_index, gameState):
+        if agent_index >= gameState.getNumAgents():
+            agent_index = 0
+            curr_depth += 1
+        if curr_depth == self.depth:
+            return None, self.evaluationFunction(gameState)
+
+        best_score, best_action = None, None
+        if agent_index == 0:
+            for action in gameState.getLegalActions(agent_index):
+                next_game_state = gameState.generateSuccessor(agent_index, action)
+                _, score = self.minimax(curr_depth, agent_index + 1, next_game_state)
+                if best_score is None or score > best_score:
+                    best_score = score
+                    best_action = action
+        else:
+            for action in gameState.getLegalActions(agent_index):
+                next_game_state = gameState.generateSuccessor(agent_index, action)
+                _, score = self.minimax(curr_depth, agent_index + 1, next_game_state)
+                if best_score is None or score < best_score:
+                    best_score = score
+                    best_action = action
+        if best_score is None:
+            return None, self.evaluationFunction(gameState)
+        return best_action, best_score
+```
+
+## AlphaBetaAgent
+The `AlphaBetaAgent` class implements the minimax algorithm with alpha-beta pruning to optimize the search process.
+
+- **getAction**: Returns the minimax action using alpha-beta pruning.
+- **alphaBeta**: Recursively calculates the best score for an agent using alpha-beta pruning.
+
+```python
+class AlphaBetaAgent(MultiAgentSearchAgent):
+    def getAction(self, gameState):
+        def alphaBeta(curr_depth, agent_index, gameState, alpha, beta):
+            if agent_index >= gameState.getNumAgents():
+                agent_index = 0
+                curr_depth += 1
+            if curr_depth == self.depth:
+                return self.evaluationFunction(gameState)
+            if agent_index == 0:
+                value = float('-inf')
+                for action in gameState.getLegalActions(agent_index):
+                    value = max(value, alphaBeta(curr_depth, agent_index + 1, gameState.generateSuccessor(agent_index, action), alpha, beta))
+                    if value > beta:
+                        return value
+                    alpha = max(alpha, value)
+                return value
+            else:
+                value = float('inf')
+                for action in gameState.getLegalActions(agent_index):
+                    value = min(value, alphaBeta(curr_depth, agent_index + 1, gameState.generateSuccessor(agent_index, action), alpha, beta))
+                    if value < alpha:
+                        return value
+                    beta = min(beta, value)
+                return value
+
+        best_action = None
+        alpha = float('-inf')
+        beta = float('inf')
+        value = float('-inf')
+        for action in gameState.getLegalActions(0):
+            new_value = alphaBeta(0, 1, gameState.generateSuccessor(0, action), alpha, beta)
+            if new_value > value:
+                value = new_value
+                best_action = action
+            alpha = max(alpha, value)
+        return best_action
+```
+
+## ExpectimaxAgent
+The `ExpectimaxAgent` class implements the expectimax algorithm, which models ghosts as choosing actions uniformly at random.
+
+- **getAction**: Returns the expectimax action from the current game state.
+- **expectimax**: Recursively calculates the best score for an agent using the expectimax algorithm.
+
+```python
+class ExpectimaxAgent(MultiAgentSearchAgent):
+    def getAction(self, gameState):
+        def expectimax(curr_depth, agent_index, gameState):
+            if agent_index >= gameState.getNumAgents():
+                agent_index = 0
+                curr_depth += 1
+            if curr_depth == self.depth:
+                return self.evaluationFunction(gameState)
+            if agent_index == 0:
+                value = float('-inf')
+                for action in gameState.getLegalActions(agent_index):
+                    value = max(value, expectimax(curr_depth, agent_index + 1, gameState.generateSuccessor(agent_index, action)))
+                return value
+            else:
+                value = 0
+                legalActions = gameState.getLegalActions(agent_index)
+                prob = 1 / len(legalActions)
+                for action in legalActions:
+                    value += prob * expectimax(curr_depth, agent_index + 1, gameState.generateSuccessor(agent_index, action))
+                return value
+
+        best_action = None
+        value = float('-inf')
+        for action in gameState.getLegalActions(0):
+            new_value = expectimax(0, 1, gameState.generateSuccessor(0, action))
+            if new_value > value:
+                value = new_value
+                best_action = action
+        return best_action
+```
+
+## Evaluation Functions
+
+### scoreEvaluationFunction
+Returns the score of the current game state.
+
+```python
+def scoreEvaluationFunction(currentGameState):
+    return currentGameState.getScore()
+```
+
+### betterEvaluationFunction
+A more advanced evaluation function that considers the current score, distance to the closest food, distance to the closest ghost, and the number of remaining food pellets.
+
+```python
+def betterEvaluationFunction(currentGameState):
+    pos = currentGameState.getPacmanPosition()
+    food = currentGameState.getFood()
+    ghostStates = currentGameState.getGhostStates()
+    scaredTimes = [ghostState.scaredTimer for ghostState in ghostStates]
+
+    foodDistances = [manhattanDistance(pos, foodPos) for foodPos in food.asList()]
+    closestFoodDistance = min(foodDistances) if foodDistances else 0
+
+    ghostDistances = [manhattanDistance(pos, ghostState.getPosition()) for ghostState in ghostStates]
+    closestGhostDistance = min(ghostDistances) if ghostDistances else 0
+
+    score = currentGameState.getScore()
+    score -= closestFoodDistance
+    if closestGhostDistance > 0:
+        score += max(closestGhostDistance, 5)
+    return score
+
+better = betterEvaluationFunction
+```
+
+## Conclusion
+
+The multiAgents.py file provides a comprehensive implementation of various AI agents for the Pacman game, each using different strategies to optimize Pacman's performance. The reflex agent uses a simple evaluation function, while the minimax, alpha-beta, and expectimax agents use more advanced search algorithms to make decisions. The evaluation functions play a crucial role in determining the effectiveness of these agents.
