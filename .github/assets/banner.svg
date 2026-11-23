@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="1200" height="320">
+  <defs>
+    <radialGradient id="bg" cx=".2" cy=".3" r="1"><stop offset="0" stop-color="#2e1065"/><stop offset="1" stop-color="#09090b"/></radialGradient>
+    <style>
+      .path{stroke-dasharray:700;stroke-dashoffset:700;animation:p 5s ease-in-out -2.5s infinite}@keyframes p{0%{stroke-dashoffset:700}60%,100%{stroke-dashoffset:0}}
+      .agent{animation:a 5s ease-in-out -2.5s infinite;offset-path:path('M30 30H150V110H90V190H270V250H390');offset-rotate:0deg}@keyframes a{0%{offset-distance:0%}60%,100%{offset-distance:100%}}
+      .lit{animation:l 2s ease-in-out infinite}.l2{animation-delay:-.7s}.l3{animation-delay:-1.4s}@keyframes l{50%{fill:#a78bfa}}
+    </style>
+  </defs>
+  <rect width="1200" height="320" fill="url(#bg)"/>
+  <!-- maze with search path -->
+  <g transform="translate(690 20)">
+    <rect width="420" height="280" rx="10" fill="#18181b" stroke="#3f3f46"/>
+    <g stroke="#6d28d9" stroke-width="8" stroke-linecap="round" fill="none">
+      <path d="M0 70H120M200 0V150M30 150H60M0 230H200M240 60H340V200M300 130V220M390 100H420M100 280V250"/>
+    </g>
+    <g fill="#4c1d95" opacity=".6"><circle cx="30" cy="90" r="5"/><circle cx="90" cy="250" r="5"/><circle cx="270" cy="30" r="5"/><circle cx="380" cy="40" r="5"/><circle cx="270" cy="130" r="5"/><circle cx="30" cy="250" r="5"/></g>
+    <path class="path" d="M30 30H150V110H90V190H270V250H390" fill="none" stroke="#fbbf24" stroke-width="4" stroke-dasharray="700"/>
+    <circle cx="390" cy="250" r="12" fill="none" stroke="#22c55e" stroke-width="3"/><circle cx="390" cy="250" r="4" fill="#22c55e"/>
+    <circle class="agent" r="11" fill="#fbbf24"/>
+  </g>
+  <!-- minimax mini tree -->
+  <g transform="translate(560 60)" font-family="Consolas, Menlo, monospace" font-size="11" fill="#e4e4e7">
+    <g stroke="#52525b" stroke-width="2"><path d="M50 10L20 70M50 10L80 70M20 70L5 130M20 70L35 130M80 70L65 130M80 70L95 130"/></g>
+    <polygon points="50,-2 62,18 38,18" fill="#a78bfa"/>
+    <polygon class="lit" points="20,80 8,60 32,60" fill="#52525b"/><polygon class="lit l2" points="80,80 68,60 92,60" fill="#52525b"/>
+    <g fill="#3f3f46"><rect x="-3" y="124" width="16" height="16" rx="3"/><rect class="lit l3" x="27" y="124" width="16" height="16" rx="3"/><rect x="57" y="124" width="16" height="16" rx="3"/><rect x="87" y="124" width="16" height="16" rx="3"/></g>
+    <text x="0" y="170" fill="#a1a1aa">MAX / MIN</text>
+  </g>
+  <text x="62" y="92" font-family="Consolas, Menlo, monospace" font-size="17" fill="#c4b5fd" letter-spacing="3">CSE366 · ARTIFICIAL INTELLIGENCE</text>
+  <text x="58" y="172" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="72" font-weight="900" fill="#fafafa">AI Labs</text>
+  <text x="62" y="218" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" fill="#a1a1aa">agents · BFS / DFS / UCS / A* · minimax · CNNs</text>
+  <g font-family="Consolas, Menlo, monospace" font-size="13" fill="#ddd6fe">
+    <rect x="62" y="244" width="100" height="28" rx="14" fill="#4c1d95"/><text x="112" y="263" text-anchor="middle">search</text>
+    <rect x="172" y="244" width="120" height="28" rx="14" fill="#4c1d95"/><text x="232" y="263" text-anchor="middle">adversarial</text>
+    <rect x="302" y="244" width="110" height="28" rx="14" fill="#4c1d95"/><text x="357" y="263" text-anchor="middle">Grad-CAM</text>
+  </g>
+</svg>
